@@ -40,3 +40,33 @@ def create_cupcake():
     db.session.add(new_cupcake)
     db.session.commit()
     return (jsonify(cupcake = new_cupcake.serialize()), 201)
+
+@app.route("/api/cupcakes/<int:cupcake_id>", methods = ["PATCH"])
+def edit_cupcake(cupcake_id):
+    """edit a cupcake in the system"""
+
+    cupcake = Cupcake.query.get_or_404(cupcake_id)
+    cupcake.flavor = request.json.get('flavor', cupcake.flavor)
+    cupcake.size = request.json.get('size', cupcake.size)
+    cupcake.rating = request.json.get('rating', cupcake.rating)
+    cupcake.image = request.json.get('image', cupcake.image)
+
+    db.session.add(cupcake)
+    db.session.commit()
+    return(jsonify(cupcake = cupcake.serialize()))
+
+@app.route("/api/cupcakes/<int:cupcake_id>", methods = ["DELETE"])
+def remove_cupcake(cupcake_id):
+    """delete a cupcake"""
+
+    cupcake = Cupcake.query.get_or_404(cupcake_id)
+    
+    db.session.delete(cupcake)
+    db.session.commit()
+    return(jsonify(message = "Deleted"))
+
+@app.route("/")
+def show_homepage():
+    """show homepage"""
+
+    return render_template("index.html")
